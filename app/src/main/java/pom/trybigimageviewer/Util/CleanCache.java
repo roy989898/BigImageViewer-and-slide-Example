@@ -29,6 +29,8 @@ public class CleanCache {
         deleteDirectoryTree(mContext.getCacheDir());
         //        clear the Glide image cache
         Glide.get(mContext).clearMemory();
+        //        clear the Cache made bu us
+        Cache.clear(mContext);
 
 
     }

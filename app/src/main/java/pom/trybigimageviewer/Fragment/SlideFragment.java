@@ -1,31 +1,37 @@
 package pom.trybigimageviewer.Fragment;
 
 
-import android.net.Uri;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
-import com.github.piasy.biv.view.BigImageView;
+import com.davemorrissey.labs.subscaleview.ImageSource;
+import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import pom.trybigimageviewer.R;
 import pom.trybigimageviewer.Util.StaticValue;
+import pom.trybigimageviewer.Util.Util;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class SlideFragment extends Fragment {
 
-    private final String thumbNail = "http://uat.services.mrm.hk/data/Kerry/images/property_info/7/Apps_bk_MantinHeightslogo.jpg";
 
-    @BindView(R.id.mBigImage)
-    BigImageView mBigImage;
+    @BindView(R.id.iv_touch)
+    SubsamplingScaleImageView ivTouch;
+    @BindView(R.id.bt_load)
+    Button btLoad;
     private Unbinder unBinder;
+    Util.GetCachedImageTask mGetCachedImageTask;
 
     public static SlideFragment newInstance(Bundle args) {
 
@@ -51,14 +57,64 @@ public class SlideFragment extends Fragment {
 
         Bundle args = getArguments();
         String link = args.getString(StaticValue.BUNDLE_KEY_IMAGE_LINK);
-        if (link != null)
-            mBigImage.showImage(Uri.parse(thumbNail), Uri.parse(link));
+
+        downloadImg(link);
+
+
         return view;
     }
 
     @Override
     public void onDestroyView() {
-//        unBinder.unbind();
+        unBinder.unbind();
         super.onDestroyView();
+    }
+
+
+    private void downloadImg(String imgUrl) {
+        if (mGetCachedImageTask != null) {
+            mGetCachedImageTask.cancel(true);
+        }
+
+
+        mGetCachedImageTask = new Util.GetCachedImageTask(getContext(), imgUrl) {
+            public Bitmap mImage;
+
+            @Override
+            protected void onPreExecute() {
+                try {
+                    btLoad.setVisibility(View.VISIBLE);
+                } catch (NullPointerException ex) {
+                    ex.printStackTrace();
+                }
+
+
+            }
+
+            protected void onPostExecute(Bitmap result) {
+
+
+
+                if (result != null) {
+                    mImage = result;
+                    // initImageView();
+
+                    try {
+                        btLoad.setVisibility(View.GONE);
+                        ivTouch.setVisibility(View.VISIBLE);
+//                    ivTouch.setImageBitmapReset(mImage, 0, true);
+                        ivTouch.setImage(ImageSource.bitmap(result));
+                    } catch (NullPointerException ex) {
+                        ex.printStackTrace();
+                    }
+
+                } else {
+                    Log.d("ImageViewerActivity", "Download Image fail");
+                }
+            }
+
+            ;
+        };
+        mGetCachedImageTask.execute();
     }
 }

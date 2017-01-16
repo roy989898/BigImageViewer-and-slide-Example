@@ -1,21 +1,25 @@
 package pom.trybigimageviewer;
 
-import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 
-import com.github.piasy.biv.indicator.progresspie.ProgressPieIndicator;
-import com.github.piasy.biv.view.BigImageView;
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import pom.trybigimageviewer.Adapter.ScreenSlidePagerAdapter;
 import pom.trybigimageviewer.Util.CleanCache;
 
 public class MainActivity extends AppCompatActivity {
 
-    @BindView(R.id.mBigImage)
-    BigImageView mBigImage;
-    private final String imageLink="http://uat.services.mrm.hk/data/Kerry/images/property_info/7/48/64/HMT_2ndEntrance_r02-2.jpg";
+
+    private final String imageLink1 = "http://uat.services.mrm.hk/data/Kerry/images/property_info/9/53/62/P2_Layout.jpg";
+    private final String imageLink2 = "http://uat.services.mrm.hk/data/Kerry/images/property_info/9/53/62/P2_Carpark.jpg";
+    private final String imageLink3 = "http://uat.services.mrm.hk/data/Kerry/images/property_info/9/53/62/P2_Building.jpg";
+    @BindView(R.id.pager)
+    ViewPager pager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,9 +27,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        ArrayList<String> linkList = new ArrayList<>();
+        initTheArrayList(linkList);
+        PagerAdapter pageAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager(), linkList);
+        pager.setAdapter(pageAdapter);
 
-        mBigImage.setProgressIndicator(new ProgressPieIndicator());
-        mBigImage.showImage(Uri.parse(imageLink));
+
     }
 
     @Override
@@ -33,4 +40,12 @@ public class MainActivity extends AppCompatActivity {
         CleanCache.newInstance(this).cleanCache();
         super.onDestroy();
     }
+
+    private void initTheArrayList(ArrayList<String> linkList) {
+        linkList.add(imageLink1);
+        linkList.add(imageLink2);
+        linkList.add(imageLink3);
+
+    }
+
 }

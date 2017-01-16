@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.github.piasy.biv.indicator.progresspie.ProgressPieIndicator;
 import com.github.piasy.biv.view.BigImageView;
 
 import butterknife.BindView;
@@ -22,6 +21,7 @@ import pom.trybigimageviewer.Util.StaticValue;
  */
 public class SlideFragment extends Fragment {
 
+    private final String thumbNail = "http://uat.services.mrm.hk/data/Kerry/images/property_info/7/Apps_bk_MantinHeightslogo.jpg";
 
     @BindView(R.id.mBigImage)
     BigImageView mBigImage;
@@ -47,12 +47,12 @@ public class SlideFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_slide, container, false);
         unBinder = ButterKnife.bind(this, view);
-        mBigImage.setProgressIndicator(new ProgressPieIndicator());
+//        mBigImage.setProgressIndicator(new MyProgressIndicator());
 
         Bundle args = getArguments();
         String link = args.getString(StaticValue.BUNDLE_KEY_IMAGE_LINK);
         if (link != null)
-            mBigImage.showImage(Uri.parse(link));
+            mBigImage.showImage(Uri.parse(thumbNail), Uri.parse(link));
         return view;
     }
 
